@@ -34,23 +34,33 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
   Summary summary;
 
   Map<String, List<CurrencyRate>> providerCurrencyRateMap = new Map();
 
-  Future<void> summarize() async {
+  AnimationController _refreshButtonAnimationController;
+  bool isRefreshing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    this._refreshButtonAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 450));
+  }
+
+  Future<bool> summarize() async {
     var response = await http.get('http://localhost:3333/status/summarize');
     if (response.statusCode == 200) {
       var summary = Summary.fromRawJson(response.body.toString());
       setState(() {
-        // ₺
         this.summary = summary;
       });
+      return true;
     }
+    return false;
   }
 
-  Future<void> showCurrentRates() async {
+  Future<bool> showCurrentRates() async {
     var response = await http.get('http://localhost:3333/currency/rates');
     if (response.statusCode == 200) {
       List<CurrencyRate> listOfCurrencyRate = new List();
@@ -68,7 +78,11 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         this.providerCurrencyRateMap = providerCurrencyRateMap;
       });
+
+      return true;
     }
+
+    return false;
   }
 
   @override
@@ -104,10 +118,30 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: refreshAll,
         tooltip: 'Refresh',
-        child: Icon(Icons.refresh_outlined),
+        child: AnimatedIcon(
+          icon: AnimatedIcons.play_pause,
+          progress: _refreshButtonAnimationController,
+        ),
         backgroundColor: Colors.lightGreen,
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void refreshAll() async {
+    setState(() {
+      this.isRefreshing = !this.isRefreshing;
+      this.isRefreshing
+          ? this._refreshButtonAnimationController.forward()
+          : this._refreshButtonAnimationController.reverse();
+    });
+    bool respSummarize = await summarize();
+    bool respShowCurrentRates = await showCurrentRates();
+
+    if (respSummarize && respShowCurrentRates) {
+      setState(() {
+        this._refreshButtonAnimationController.reverse();
+      });
+    }
   }
 
   Row getCurrentStatusRow(Summary summary) {
@@ -201,11 +235,6 @@ class _MyHomePageState extends State<MyHomePage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: getProviders(providerCurrencyRateMap),
     );
-  }
-
-  void refreshAll() async {
-    summarize();
-    showCurrentRates();
   }
 
   getProviders(Map<String, List<CurrencyRate>> providerCurrencyRateMap) {
