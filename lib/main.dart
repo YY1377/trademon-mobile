@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     Text(
                       '$savingCapital',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                     Text(
                       'Current Capital',
@@ -148,7 +148,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: TextStyle(fontWeight: FontWeight.w300),
                   ),
                   Text(
-                    '$currentStatus',
+                    '$currentStatus'.split("\ ")[0] + ' ' + '$currentStatus'.split("\ ")[1],
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                  ),
+                  Text(
+                    '$currentStatus'.split("\ ")[2] + ' ' + '$currentStatus'.split("\ ")[3],
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                  ),
+                  Text(
+                    '$currentStatus'.split("\ ")[4],
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                   ),
                 ]),
@@ -160,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               'Currency Rates',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headline3,
             ),
             getCurrencyRates(providerCurrencyRateMap),
             Spacer(),
@@ -195,7 +203,10 @@ class _MyHomePageState extends State<MyHomePage> {
       list.add(Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(key),
+          Text(
+            key,
+            style: TextStyle(decoration: TextDecoration.underline),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: getCurrs(providerCurrencyRateMap[key]),
