@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -42,14 +43,19 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   AnimationController _refreshButtonAnimationController;
   bool isRefreshing = false;
 
+  MaterialColor currencyRatesStatusColor;
+  MaterialColor summarizeStatusColor;
+
   @override
   void initState() {
     super.initState();
+    this.summarizeStatusColor = Colors.amber;
+    this.currencyRatesStatusColor = Colors.amber;
     this._refreshButtonAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 450));
   }
 
   Future<bool> summarize() async {
-    var response = await http.get('http://localhost:3333/status/summarize');
+    var response = await http.get('http://localhost:3333/status/summarize').timeout(Duration(seconds: 5));
     if (response.statusCode == 200) {
       var summary = Summary.fromRawJson(response.body.toString());
       setState(() {
@@ -61,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   }
 
   Future<bool> showCurrentRates() async {
-    var response = await http.get('http://localhost:3333/currency/rates');
+    var response = await http.get('http://localhost:3333/currency/rates').timeout(Duration(seconds: 5));
     if (response.statusCode == 200) {
       List<CurrencyRate> listOfCurrencyRate = new List();
       List.from(jsonDecode(response.body)).forEach((element) => listOfCurrencyRate.add(CurrencyRate.fromJson(element)));
@@ -99,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             Spacer(),
             Text(
               'Status',
-              style: Theme.of(context).textTheme.headline3,
+              style: Theme.of(context).textTheme.headline3.merge(TextStyle(color: summarizeStatusColor)),
             ),
             getCurrentStatusRow(summary),
             Spacer(
@@ -107,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             ),
             Text(
               'Currency Rates',
-              style: Theme.of(context).textTheme.headline3,
+              style: Theme.of(context).textTheme.headline3.merge(TextStyle(color: currencyRatesStatusColor)),
             ),
             getCurrencyRates(providerCurrencyRateMap),
             Spacer(),
@@ -134,14 +140,22 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           ? this._refreshButtonAnimationController.forward()
           : this._refreshButtonAnimationController.reverse();
     });
-    bool respSummarize = await summarize();
-    bool respShowCurrentRates = await showCurrentRates();
-
-    if (respSummarize && respShowCurrentRates) {
-      setState(() {
-        this._refreshButtonAnimationController.reverse();
-      });
+    try {
+      await summarize();
+      summarizeStatusColor = Colors.amber;
+    } on TimeoutException catch (e) {
+      summarizeStatusColor = Colors.red;
     }
+    try {
+      await showCurrentRates();
+      currencyRatesStatusColor = Colors.amber;
+    } on TimeoutException catch (e) {
+      currencyRatesStatusColor = Colors.red;
+    }
+
+    setState(() {
+      this._refreshButtonAnimationController.reverse();
+    });
   }
 
   Row getCurrentStatusRow(Summary summary) {
