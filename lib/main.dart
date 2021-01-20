@@ -240,64 +240,67 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Expanded(
+          flex: 2,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 'Total Transaction',
                 textScaleFactor: 0.8,
-                style: TextStyle(fontWeight: FontWeight.w300),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
               ),
               Text(
                 '$totalTransaction',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ],
           ),
         ),
         Expanded(
+          flex: 4,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 'Saving Capital',
                 textScaleFactor: 0.8,
-                style: TextStyle(fontWeight: FontWeight.w300),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300, ),
               ),
               Text(
                 '$savingCapital',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
               Text(
                 'Current Capital',
                 textScaleFactor: 0.8,
-                style: TextStyle(fontWeight: FontWeight.w300),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300),
               ),
               Text(
                 '$currentCapital',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
               ),
             ],
           ),
         ),
         Expanded(
+          flex: 2,
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Text(
               'Current Status',
               textScaleFactor: 0.8,
-              style: TextStyle(fontWeight: FontWeight.w300),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
             ),
             Text(
               '$diffAmount',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
             Text(
               '$diffPercentage',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
             Text(
               '$diff',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
           ]),
         ),
