@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Trademon',
       theme: ThemeData(
-        primarySwatch: Colors.lightGreen,
+        primarySwatch: Colors.lightBlue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: 'Trademon Dashboard'),
@@ -96,27 +96,86 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        backgroundColor: Colors.lightGreen,
+        backgroundColor: Colors.amber,
       ),
-      body: Center(
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Spacer(),
-            Text(
-              'Status',
-              style: Theme.of(context).textTheme.headline3.merge(TextStyle(color: summarizeStatusColor)),
-            ),
-            getCurrentStatusRow(summary),
-            Spacer(
-              flex: 2,
-            ),
-            Text(
-              'Currency Rates',
-              style: Theme.of(context).textTheme.headline3.merge(TextStyle(color: currencyRatesStatusColor)),
-            ),
-            getCurrencyRates(providerCurrencyRateMap),
-            Spacer(),
+            Expanded(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Container(
+                    color: Colors.black45,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Status',
+                                style:
+                                    Theme.of(context).textTheme.headline3.merge(TextStyle(color: summarizeStatusColor)),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [getStatusRow(summary)],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    color: Colors.black54,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Container(
+                            height: 75,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Currency Rates',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline3
+                                      .merge(TextStyle(color: summarizeStatusColor)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: getCurrencyRatesRow(providerCurrencyRateMap),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ))
           ],
         ),
       ),
@@ -128,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           icon: AnimatedIcons.play_pause,
           progress: _refreshButtonAnimationController,
         ),
-        backgroundColor: Colors.lightGreen,
+        backgroundColor: Colors.amber,
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
@@ -158,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     });
   }
 
-  Row getCurrentStatusRow(Summary summary) {
+  Row getStatusRow(Summary summary) {
     if (summary == null) {
       return Row(
         children: [Text('-')],
@@ -178,75 +237,77 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       diff = currentStatus.diff ?? '-';
     }
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Spacer(),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Total Transaction',
+                textScaleFactor: 0.8,
+                style: TextStyle(fontWeight: FontWeight.w300),
+              ),
+              Text(
+                '$totalTransaction',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Saving Capital',
+                textScaleFactor: 0.8,
+                style: TextStyle(fontWeight: FontWeight.w300),
+              ),
+              Text(
+                '$savingCapital',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              Text(
+                'Current Capital',
+                textScaleFactor: 0.8,
+                style: TextStyle(fontWeight: FontWeight.w300),
+              ),
+              Text(
+                '$currentCapital',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Text(
-              'Total Transaction',
+              'Current Status',
               textScaleFactor: 0.8,
               style: TextStyle(fontWeight: FontWeight.w300),
             ),
             Text(
-              '$totalTransaction',
+              '$diffAmount',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
             ),
-          ],
+            Text(
+              '$diffPercentage',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+            ),
+            Text(
+              '$diff',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+            ),
+          ]),
         ),
-        Spacer(),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Saving Capital',
-              textScaleFactor: 0.8,
-              style: TextStyle(fontWeight: FontWeight.w300),
-            ),
-            Text(
-              '$savingCapital',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            Text(
-              'Current Capital',
-              textScaleFactor: 0.8,
-              style: TextStyle(fontWeight: FontWeight.w300),
-            ),
-            Text(
-              '$currentCapital',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-            ),
-          ],
-        ),
-        Spacer(),
-        Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(
-            'Current Status',
-            textScaleFactor: 0.8,
-            style: TextStyle(fontWeight: FontWeight.w300),
-          ),
-          Text(
-            '$diffAmount',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-          Text(
-            '$diffPercentage',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-          Text(
-            '$diff',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-        ]),
-        Spacer(),
       ],
     );
   }
 
-  getCurrencyRates(Map<String, List<CurrencyRate>> providerCurrencyRateMap) {
+  getCurrencyRatesRow(Map<String, List<CurrencyRate>> providerCurrencyRateMap) {
     return new Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: getProviders(providerCurrencyRateMap),
     );
   }
